@@ -12,6 +12,17 @@
 
 (function() {
     'use strict';
-
-    alert('Hello World!')
+    debugger;
+    injectCSS(`
+        .wrongLIST .listTi .right .bottom {
+            height: auto !important;
+        }
+    `);
 })();
+
+function injectCSS(text)
+{
+    var styleEle = document.createElement("style");
+    styleEle.innerHTML = text;
+    document.documentElement.appendChild(styleEle);
+}
