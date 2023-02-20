@@ -14,7 +14,28 @@
     'use strict';
     debugger;
     injectCSS(`
-        .wrongLIST .listTi .right .bottom {
+        .wrongLIST,
+        .currentLIST {
+            display: flex;
+            overflow-x: auto;
+        }
+
+        .listTi {
+            display: block !important;
+            width: auto !important;
+            border: 1px solid gray;
+            margin-top: 15px !important;
+        }
+
+        .listTi .left {
+            width: auto !important;
+        }
+
+        .listTi .right {
+            width: auto !important;
+        }
+
+        .listTi .right .bottom {
             height: auto !important;
         }
     `);
