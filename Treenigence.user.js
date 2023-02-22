@@ -3,7 +3,7 @@
 // @namespace    Treenigence
 // @version      0.1
 // @description  Enhancement for Treenity(智慧树).
-// @author       TripleCamera2022
+// @author       TripleCamera2022, 14725
 // @match        https://ainew.zhihuishu.com/*
 // @grant        none
 // @run-at       document-end
