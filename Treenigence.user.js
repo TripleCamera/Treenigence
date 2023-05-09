@@ -8,7 +8,6 @@
 // @grant        none
 // @run-at       document-end
 // @license      MIT
-// @require      https://html2canvas.hertzen.com/dist/html2canvas.min.js
 // @require      https://unpkg.com/html-to-image@1.11.11/dist/html-to-image.js
 // ==/UserScript==
 
@@ -55,20 +54,28 @@ function knowledgeAnalysis()
         }
     `);
 
-    // html2canvas(document.querySelector(".listTi")).then(canvas => {
-    //     var link = document.createElement("a");
-    //     link.download = 'test';
-    //     link.href = canvas.toDataURL();
+    // htmlToImage.toPng(document.querySelector(".listTi")).then(function (dataUrl) {
+    //     var link = document.createElement('a');
+    //     link.download = 'my-image-name.png';
+    //     link.href = dataUrl;
     //     link.click();
     // });
 
-    htmlToImage.toPng(document.querySelector(".listTi")).then(function (dataUrl) {
-        var link = document.createElement('a');
-        link.download = 'my-image-name.jpeg';
-        link.href = dataUrl;
-        link.click();
-    });
-
+    var listTi = document.querySelectorAll('.listTi');
+    for (var i = 0; i < listTi.length; i++)
+    {
+        var button = document.createElement('button');
+        button.innerHTML = '保存';
+        button.onclick = function (event) {
+            htmlToImage.toPng(event.target.parentNode).then(function (dataUrl) {
+                var link = document.createElement('a');
+                link.download = 'Treenigence_screenshot.png';
+                link.href = dataUrl;
+                link.click();
+            });
+        }
+        listTi[i].appendChild(button);
+    }
     // 自动关闭提示
     document.querySelector('.Tips .ZHIHUISHU_QZMD').click();
 }
