@@ -45,6 +45,7 @@ function beautifyknowledgeAnalysis()
             width: auto !important;
             border: 1px solid gray;
             margin-top: 15px !important;
+            padding: 12px !important;
         }
 
         .listTi .left {
@@ -57,6 +58,12 @@ function beautifyknowledgeAnalysis()
 
         .listTi .right .bottom {
             height: auto !important;
+        }
+
+        .listTi .right .bottom .el-scrollbar__wrap {
+            /* 去除滚动条 */
+            overflow: auto !important;
+            margin: 0 !important;
         }
     `);
 }
@@ -73,6 +80,7 @@ function knowledgeAnalysis()
     {
         var button = document.createElement('button');
         button.innerHTML = '保存';
+        button.style.float = "right";
         button.onclick = function (event) {
             htmlToImage.toPng(event.target.parentNode).then(function (dataUrl) {
                 var link = document.createElement('a');
@@ -80,8 +88,14 @@ function knowledgeAnalysis()
                 link.href = dataUrl;
                 link.click();
             });
+            htmlToImage.toSvg(event.target.parentNode).then(function (dataUrl) {
+                var link = document.createElement('a');
+                link.download = 'Treenigence_screenshot.svg';
+                link.href = dataUrl;
+                link.click();
+            });
         }
-        listTi[i].appendChild(button);
+        listTi[i].insertBefore(button, listTi[i].firstChild);
     }
 
 
