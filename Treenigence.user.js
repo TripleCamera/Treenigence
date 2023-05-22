@@ -14,8 +14,14 @@
 (function() {
     'use strict';
     debugger;
-
-    window.setTimeout(knowledgeAnalysis, 5000);
+    beautifyknowledgeAnalysis();
+    //window.setTimeout(knowledgeAnalysis, 5000);
+    if(location.href.includes("knowledgeAnalysis"))
+       tryUntil(function() {return document.querySelector(".listTi")}, 50, 10000).then(knowledgeAnalysis);
+    tryUntil(function() {return document.querySelector(".Tips .ZHIHUISHU_QZMD")}, 50, 10000).then(function() {
+        // 自动关闭提示
+        document.querySelector('.Tips .ZHIHUISHU_QZMD').click();
+    });
 })();
 
 function injectCSS(text)
@@ -25,7 +31,7 @@ function injectCSS(text)
     document.documentElement.appendChild(styleEle);
 }
 
-function knowledgeAnalysis()
+function beautifyknowledgeAnalysis()
 {
     injectCSS(`
         .wrongLIST,
@@ -60,14 +66,15 @@ function knowledgeAnalysis()
             margin: 0 !important;
         }
     `);
-
+}
     // htmlToImage.toPng(document.querySelector(".listTi")).then(function (dataUrl) {
     //     var link = document.createElement('a');
     //     link.download = 'my-image-name.png';
     //     link.href = dataUrl;
     //     link.click();
     // });
-
+function knowledgeAnalysis()
+{
     var listTi = document.querySelectorAll('.listTi');
     for (var i = 0; i < listTi.length; i++)
     {
@@ -90,6 +97,32 @@ function knowledgeAnalysis()
         }
         listTi[i].insertBefore(button, listTi[i].firstChild);
     }
-    // 自动关闭提示
-    document.querySelector('.Tips .ZHIHUISHU_QZMD').click();
+
+
+}
+
+function tryUntil(condition, duration, maxTime)
+{
+    var tryCount = Math.ceil(maxTime / duration) + 1;
+    return new Promise(function(ok, error) {
+        function trier()
+        {
+            try
+            {
+                if(condition())
+                {
+                    ok();
+                    return;
+                }
+            }
+            catch(e)
+            {
+                console.warning("Treenigence: 运行条件判断时出现错误。", e);
+                error(e);
+            }
+            if(tryCount--) setTimeout(trier, duration);
+            else           error("Timeout");
+        }
+        trier();
+    });
 }
