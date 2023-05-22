@@ -14,14 +14,11 @@
 (function() {
     'use strict';
     debugger;
-    beautifyknowledgeAnalysis();
+    // 知识点练习报告
     //window.setTimeout(knowledgeAnalysis, 5000);
-    if(location.href.includes("knowledgeAnalysis"))
-       tryUntil(function() {return document.querySelector(".listTi")}, 50, 10000).then(knowledgeAnalysis);
-    tryUntil(function() {return document.querySelector(".Tips .ZHIHUISHU_QZMD")}, 50, 10000).then(function() {
-        // 自动关闭提示
-        document.querySelector('.Tips .ZHIHUISHU_QZMD').click();
-    });
+    if(location.href.includes("knowledgeAnalysis")) {
+        knowledgeAnalysis();
+    }
 })();
 
 function injectCSS(text)
@@ -31,8 +28,35 @@ function injectCSS(text)
     document.documentElement.appendChild(styleEle);
 }
 
-function beautifyknowledgeAnalysis()
+function tryUntil(condition, duration, maxTime)
 {
+    var tryCount = Math.ceil(maxTime / duration) + 1;
+    return new Promise(function(ok, error) {
+        function trier()
+        {
+            try
+            {
+                if(condition())
+                {
+                    ok();
+                    return;
+                }
+            }
+            catch(e)
+            {
+                console.warning("Treenigence: 运行条件判断时出现错误。", e);
+                error(e);
+            }
+            if(tryCount--) setTimeout(trier, duration);
+            else           error("Timeout");
+        }
+        trier();
+    });
+}
+
+function knowledgeAnalysis()
+{
+    // 排版修复
     injectCSS(`
         .wrongLIST,
         .currentLIST {
@@ -66,63 +90,41 @@ function beautifyknowledgeAnalysis()
             margin: 0 !important;
         }
     `);
-}
-    // htmlToImage.toPng(document.querySelector(".listTi")).then(function (dataUrl) {
-    //     var link = document.createElement('a');
-    //     link.download = 'my-image-name.png';
-    //     link.href = dataUrl;
-    //     link.click();
-    // });
-function knowledgeAnalysis()
-{
-    var listTi = document.querySelectorAll('.listTi');
-    for (var i = 0; i < listTi.length; i++)
-    {
-        var button = document.createElement('button');
-        button.innerHTML = '保存';
-        button.style.float = "right";
-        button.onclick = function (event) {
-            htmlToImage.toPng(event.target.parentNode).then(function (dataUrl) {
-                var link = document.createElement('a');
-                link.download = 'Treenigence_screenshot.png';
-                link.href = dataUrl;
-                link.click();
-            });
-            htmlToImage.toSvg(event.target.parentNode).then(function (dataUrl) {
-                var link = document.createElement('a');
-                link.download = 'Treenigence_screenshot.svg';
-                link.href = dataUrl;
-                link.click();
-            });
-        }
-        listTi[i].insertBefore(button, listTi[i].firstChild);
-    }
 
-
-}
-
-function tryUntil(condition, duration, maxTime)
-{
-    var tryCount = Math.ceil(maxTime / duration) + 1;
-    return new Promise(function(ok, error) {
-        function trier()
+    // 截图
+    tryUntil(function() {return document.querySelector(".listTi")}, 50, 10000).then(function() {
+        // htmlToImage.toPng(document.querySelector(".listTi")).then(function (dataUrl) {
+        //     var link = document.createElement('a');
+        //     link.download = 'my-image-name.png';
+        //     link.href = dataUrl;
+        //     link.click();
+        // });
+        var listTi = document.querySelectorAll('.listTi');
+        for (var i = 0; i < listTi.length; i++)
         {
-            try
-            {
-                if(condition())
-                {
-                    ok();
-                    return;
-                }
+            var button = document.createElement('button');
+            button.innerHTML = '保存';
+            button.style.float = "right";
+            button.onclick = function (event) {
+                htmlToImage.toPng(event.target.parentNode).then(function (dataUrl) {
+                    var link = document.createElement('a');
+                    link.download = 'Treenigence_screenshot.png';
+                    link.href = dataUrl;
+                    link.click();
+                });
+                htmlToImage.toSvg(event.target.parentNode).then(function (dataUrl) {
+                    var link = document.createElement('a');
+                    link.download = 'Treenigence_screenshot.svg';
+                    link.href = dataUrl;
+                    link.click();
+                });
             }
-            catch(e)
-            {
-                console.warning("Treenigence: 运行条件判断时出现错误。", e);
-                error(e);
-            }
-            if(tryCount--) setTimeout(trier, duration);
-            else           error("Timeout");
+            listTi[i].insertBefore(button, listTi[i].firstChild);
         }
-        trier();
+    });
+
+    // 自动关闭提示
+    tryUntil(function() {return document.querySelector(".Tips .ZHIHUISHU_QZMD")}, 50, 10000).then(function() {
+        document.querySelector('.Tips .ZHIHUISHU_QZMD').click();
     });
 }
