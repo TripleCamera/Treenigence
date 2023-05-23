@@ -11,51 +11,44 @@
 // @require      https://unpkg.com/html-to-image@1.11.11/dist/html-to-image.js
 // ==/UserScript==
 
-(function() {
+(function () {
     'use strict';
     debugger;
     // 知识点练习报告
     //window.setTimeout(knowledgeAnalysis, 5000);
-    if(location.href.includes("knowledgeAnalysis")) {
+    if (location.href.includes("knowledgeAnalysis")) {
         knowledgeAnalysis();
     }
 })();
 
-function injectCSS(text)
-{
+function injectCSS(text) {
     var styleEle = document.createElement("style");
     styleEle.innerHTML = text;
     document.documentElement.appendChild(styleEle);
 }
 
-function tryUntil(condition, duration, maxTime)
-{
+function tryUntil(condition, duration, maxTime) {
     var tryCount = Math.ceil(maxTime / duration) + 1;
-    return new Promise(function(ok, error) {
-        function trier()
-        {
-            try
-            {
-                if(condition())
-                {
+    return new Promise(function (ok, error) {
+        function trier() {
+            try {
+                if (condition()) {
                     ok();
                     return;
                 }
             }
-            catch(e)
-            {
-                console.warning("Treenigence: 运行条件判断时出现错误。", e);
+            catch (e) {
+                console.warning("[Treenigence] 运行条件判断时出现错误。", e);
                 error(e);
             }
-            if(tryCount--) setTimeout(trier, duration);
-            else           error("Timeout");
+            if (tryCount--) setTimeout(trier, duration);
+            else error("Timeout");
         }
         trier();
     });
 }
 
-function knowledgeAnalysis()
-{
+function knowledgeAnalysis() {
     // 排版修复
     injectCSS(`
         .wrongLIST,
@@ -92,7 +85,7 @@ function knowledgeAnalysis()
     `);
 
     // 截图
-    tryUntil(function() {return document.querySelector(".listTi")}, 50, 10000).then(function() {
+    tryUntil(function () { return document.querySelector(".listTi") }, 50, 10000).then(function () {
         // htmlToImage.toPng(document.querySelector(".listTi")).then(function (dataUrl) {
         //     var link = document.createElement('a');
         //     link.download = 'my-image-name.png';
@@ -100,8 +93,7 @@ function knowledgeAnalysis()
         //     link.click();
         // });
         var listTi = document.querySelectorAll('.listTi');
-        for (var i = 0; i < listTi.length; i++)
-        {
+        for (var i = 0; i < listTi.length; i++) {
             var button = document.createElement('button');
             button.innerHTML = '保存';
             button.style.float = "right";
@@ -124,7 +116,7 @@ function knowledgeAnalysis()
     });
 
     // 自动关闭提示
-    tryUntil(function() {return document.querySelector(".Tips .ZHIHUISHU_QZMD")}, 50, 10000).then(function() {
+    tryUntil(function () { return document.querySelector(".Tips .ZHIHUISHU_QZMD") }, 50, 10000).then(function () {
         document.querySelector('.Tips .ZHIHUISHU_QZMD').click();
     });
 }
